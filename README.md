@@ -6,4 +6,9 @@
 - https://github.com/Azure-Samples/azure-logic-apps-deployment-samples
 - https://github.com/jeffhollan/LogicAppTemplateCreator
 
-## Artifacts
+## Logic App Definition
+
+![Designer View] (media/LogicAppDefinition.png)
+
+Convert each good message to JSON, with this expression:
+xml(base64ToBinary(items('For_each')?['Payload']))
