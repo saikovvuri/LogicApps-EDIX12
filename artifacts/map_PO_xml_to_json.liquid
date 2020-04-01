@@ -1,0 +1,25 @@
+{
+	"PurchaseOrderNumber": {{ content.X12_00401_850.BEG.BEG03 }},
+	"OrderDate": {{ content.X12_00401_850.BEG.BEG05 }},
+    "Currency": "{{ content.X12_00401_850.CUR.CUR02 }}",
+	"References": [
+		{% JSONArrayFor  reference in content.X12_00401_850 where REF %}
+		{
+			"RefIdQualifier": "{{ reference.REF01 }}" ,
+			"RefId": "{{ reference.REF02 }}"	
+		}
+		{% endJSONArrayFor  %}
+	],
+	"LineItems": [
+        {% JSONArrayFor  li in content.X12_00401_850 where PO1Loop1 %}
+        {
+            "ItemId": "{{ li.PO1.PO101 }}",
+            "ProductId": {{ li.PO1.PO107}},
+            "ProductDescription": {{ li.PO1.PO109 }},
+            "UnitPrice": {{ li.PO1.PO104 }},
+            "QuantityOrdered": {{ li.PO1.PO102 }},
+            "UOM": "{{ li.PO1.PO103}}"
+        }
+        {% endJSONArrayFor  %}
+    ]	
+}
