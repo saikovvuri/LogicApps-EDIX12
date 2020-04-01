@@ -8,7 +8,7 @@
 
 ## Logic App Definition
 
-![Designer View] (media/LogicAppDefinition.png)
+! [Designer View] (media/LogicAppDefinition.png)
 
-Convert each good message to JSON, with this expression:
+Convert each good message to xml, with this expression:
 xml(base64ToBinary(items('For_each')?['Payload']))
