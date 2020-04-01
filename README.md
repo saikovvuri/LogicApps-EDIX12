@@ -8,7 +8,7 @@
 
 ## Logic App Definition
 
-! [Designer View] (media/LogicAppDefinition.png)
+<img src="media/LogicAppDefinition.png" alt="Designer View" />
 
 Convert each good message to xml, with this expression:
 xml(base64ToBinary(items('For_each')?['Payload']))
