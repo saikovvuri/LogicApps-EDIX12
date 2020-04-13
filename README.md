@@ -5,18 +5,18 @@ This repository is a placeholder for building a logic app that can be used to B2
 ## Folder Structure
 
 1. Templates
-..* following the guidelines of "automate logic apps" split the whole template into specialized json files
+    following the guidelines of "automate logic apps" split the whole template into specialized json files
 2. Artifacts
-..* liquid file to map xml to a custom order format
-..* sample 850 Purchase order in X12
-..* x12 850 xsd to be uploaded to integration account, to be used on agreement between partners
+    liquid file to map xml to a custom order format
+    sample 850 Purchase order in X12
+    x12 850 xsd to be uploaded to integration account, to be used on agreement between partners
 
 ## Work In progress
 
 1. using metadata on integration account artifacts to build reusable patterns across multiple partners
 2. automate deployments for logic apps to dev/test/prod environments using the guidelines in the references section
-..* have complete separating logic app template, logic app definition, logic app definition paramters into separate json files
-..* have to figure out how to add items from artifact folder as part of provisioning integration account
+    have complete separating logic app template, logic app definition, logic app definition paramters into separate json files
+    have to figure out how to add items from artifact folder as part of provisioning integration account
 
 ## References
 
