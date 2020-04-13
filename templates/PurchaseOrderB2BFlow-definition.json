@@ -1,0 +1,201 @@
+{
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+        "Check_Bad_Messages": {
+            "actions": {
+                "For_each_Bad_Message": {
+                    "actions": {
+                        "Create_blob": {
+                            "inputs": {
+                                "body": "@{concat(items('For_each_Bad_Message')?['exception'], base64ToString(items('For_each_Bad_Message')?['Payload']))}",
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/datasets/default/files",
+                                "queries": {
+                                    "folderPath": "/badmessages",
+                                    "name": "@{concat('FailedMessage', utcnow())}",
+                                    "queryParametersSingleEncoded": true
+                                }
+                            },
+                            "runAfter": {},
+                            "runtimeConfiguration": {
+                                "contentTransfer": {
+                                    "transferMode": "Chunked"
+                                }
+                            },
+                            "type": "ApiConnection"
+                        }
+                    },
+                    "foreach": "@body('Decode_X12_message')?['BadMessages']",
+                    "runAfter": {},
+                    "type": "Foreach"
+                }
+            },
+            "expression": {
+                "and": [
+                    {
+                        "greaterOrEquals": [
+                            "@length(body('Decode_X12_message')?['BadMessages'])",
+                            1
+                        ]
+                    }
+                ]
+            },
+            "runAfter": {
+                "Decode_X12_message": [
+                    "Succeeded"
+                ]
+            },
+            "type": "If"
+        },
+        "Check_Generated_Acks": {
+            "actions": {
+                "For_each_Generated_Ack": {
+                    "actions": {
+                        "Create_blob_2": {
+                            "inputs": {
+                                "body": "@base64ToString(body('Encode_to_X12_message_by_agreement_name_(V2)')?['content']?['$content'])",
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/datasets/default/files",
+                                "queries": {
+                                    "folderPath": "/generatedacks",
+                                    "name": "@{concat(body('Encode_to_X12_message_by_agreement_name_(V2)')?['AgreementProperties']?['AgreementName'], '-', utcnow())}",
+                                    "queryParametersSingleEncoded": true
+                                }
+                            },
+                            "runAfter": {
+                                "Encode_to_X12_message_by_agreement_name_(V2)": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "runtimeConfiguration": {
+                                "contentTransfer": {
+                                    "transferMode": "Chunked"
+                                }
+                            },
+                            "type": "ApiConnection"
+                        },
+                        "Encode_to_X12_message_by_agreement_name_(V2)": {
+                            "inputs": {
+                                "body": "@xml(base64ToBinary(items('For_each_Generated_Ack')?['ackPayload']))",
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['x12']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/EncodeV2/ResolveByName",
+                                "queries": {
+                                    "agreementName": "@body('Resolve_X12_agreement')?['AgreementName']"
+                                }
+                            },
+                            "runAfter": {},
+                            "type": "ApiConnection"
+                        }
+                    },
+                    "foreach": "@body('Decode_X12_message')?['GeneratedAcks']",
+                    "runAfter": {},
+                    "type": "Foreach"
+                }
+            },
+            "expression": {
+                "and": [
+                    {
+                        "greaterOrEquals": [
+                            "@length(body('Decode_X12_message')?['generatedAcks'])",
+                            1
+                        ]
+                    }
+                ]
+            },
+            "runAfter": {
+                "Decode_X12_message": [
+                    "Succeeded"
+                ]
+            },
+            "type": "If"
+        },
+        "Decode_X12_message": {
+            "inputs": {
+                "body": "@triggerBody()",
+                "host": {
+                    "connection": {
+                        "name": "@parameters('$connections')['x12']['connectionId']"
+                    }
+                },
+                "method": "post",
+                "path": "/decode"
+            },
+            "runAfter": {
+                "Resolve_X12_agreement": [
+                    "Succeeded"
+                ]
+            },
+            "type": "ApiConnection"
+        },
+        "For_each_Good_Message": {
+            "actions": {
+                "Transform_XML_to_JSON": {
+                    "inputs": {
+                        "content": "@{xml(base64ToBinary(items('For_each_Good_Message')?['Payload']))}",
+                        "integrationAccount": {
+                            "map": {
+                                "name": "map_PO_xml_to_json"
+                            }
+                        }
+                    },
+                    "kind": "XmlToJson",
+                    "runAfter": {},
+                    "type": "Liquid"
+                }
+            },
+            "foreach": "@body('Decode_X12_message')?['GoodMessages']",
+            "runAfter": {
+                "Decode_X12_message": [
+                    "Succeeded"
+                ]
+            },
+            "type": "Foreach"
+        },
+        "Resolve_X12_agreement": {
+            "inputs": {
+                "body": "@triggerBody()",
+                "host": {
+                    "connection": {
+                        "name": "@parameters('$connections')['x12']['connectionId']"
+                    }
+                },
+                "method": "post",
+                "path": "/resolveAgreement"
+            },
+            "runAfter": {},
+            "type": "ApiConnection"
+        }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "parameters": {
+    "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+        }
+    },
+    "triggers": {
+        "manual": {
+            "inputs": {
+                "schema": {}
+            },
+            "kind": "Http",
+            "type": "Request"
+        }
+    }    
+}

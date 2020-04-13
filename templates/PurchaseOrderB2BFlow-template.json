@@ -1,0 +1,73 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "groupId": {
+        "type": "string",
+        "metadata": {
+          "description": "The group name to use for creating resource names"
+        }
+      },
+      "environment": {
+        "type": "string",
+        "defaultValue": "d",
+        "metadata": {
+          "description": "The alphabetical character that identifies the deployment environment to use in the name for each created resource. For example, values include 'd' for development, 't' for test, 's' for staging, and 'p' for production."
+        }
+      },
+      "locationName": {
+        "type": "string",
+        "metadata": {
+          "description": "The name that identifies the region or location in resource names and is usually the shortened version of that name"
+        }
+      },
+      "identifier": {
+        "type": "string",
+        "metadata": {
+          "description": "The value that's appended to the logic app name and identifies the logic app's purpose or function."
+        }
+      },
+      "instance": {
+        "type": "int",
+        "defaultValue": 1,
+        "metadata": {
+          "description": "The value that tracks the number of resource group instances"
+        }
+      }
+    },
+    "variables": {
+      "location": "[resourceGroup().location]",
+      "baseName": "[concat(parameters('groupId'), parameters('environment'))]",
+      "sharedResourceGroupName": "[toLower(concat(variables('baseName'), 'rgp', variables('location'), '-shared'))]",
+      "integrationAccountName": "[toLower(concat(variables('baseName'), 'iact', parameters('locationName')))]",
+      "instance": "[if(equals(parameters('instance'), 1), '', concat('-', sub(parameters('instance'), 1)))]",
+      "logicAppName": "[toLower(concat(variables('baseName'), 'la', parameters('locationName'), '-', parameters('identifier'), variables('instance')))]"
+    },
+    "resources": [
+      {
+        "name": "[variables('logicAppName')]",
+        "type": "Microsoft.Logic/workflows",
+        "location": "[variables('location')]",
+        "apiVersion": "2016-06-01",
+        "properties": {
+          "integrationAccount": {
+            "id": "[resourceId(subscription().subscriptionId, variables('sharedResourceGroupName'), 'Microsoft.Logic/integrationAccounts', variables('integrationAccountName'))]"
+          },
+          "definition": {
+            "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "triggers": {},
+            "actions": {},
+            "outputs": {}
+          }
+        }
+      }
+    ],
+    "outputs": {
+      "logicAppName": {
+        "type": "string",
+        "value": "[variables('logicAppName')]"
+      }
+    }
+  }

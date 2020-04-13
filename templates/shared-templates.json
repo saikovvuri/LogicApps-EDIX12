@@ -1,0 +1,114 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "groupId": {
+            "type": "string",
+            "metadata": {
+                "description": "The group name to use for creating resource names"
+            }
+        },
+        "environment": {
+            "type": "string",
+            "defaultValue": "d",
+            "metadata": {
+                "description": "The alphabetical character that identifies the deployment environment to use in the name for each created resource. For example, values include 'd' for development, 't' for test, 's' for staging, and 'p' for production."
+            }
+        },
+        "locationName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name that identifies the region or location in resource names and is usually the shortened version of that name"
+            }
+        },
+        "integrationAccountSku": {
+            "type": "string",
+            "allowedValues": [
+                "Free",
+                "Standard"
+            ],
+            "defaultValue": "Free",
+            "metadata": {
+                "description": "The SKU for the integration account"
+            }
+        },
+        "containers": {
+            "type": "array",
+            "defaultValue": [
+                "badmessages",
+                "generatedacks"
+            ],
+            "metadata": {
+                "description": "The array of containers to create"
+            }
+        }
+    },
+    "variables": {
+        "location": "[resourceGroup().location]",
+        "baseName": "[concat(parameters('groupId'), parameters('environment'))]",
+        "integrationAccountName": "[toLower(concat(variables('baseName'), 'iact', parameters('locationName')))]",
+        "storageAccountName": "[toLower(concat(variables('baseName'), 'sa2', parameters('locationName')))]"
+    },
+    "resources": [
+        {
+            "name": "[variables('integrationAccountName')]",
+            "type": "Microsoft.Logic/integrationAccounts",
+            "apiVersion": "2016-06-01",
+            "location": "[variables('location')]",
+            "tags": {
+                "groupdId": "[parameters('groupId')]"
+            },
+            "properties": {},
+            "sku": {
+                "name": "[parameters('integrationAccountSku')]"
+            },
+            "resources": []
+        },
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "tags": {
+                "groupdId": "[parameters('groupId')]"
+            },
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "StorageV2",
+            "location": "[variables('location')]",
+            "properties": {
+                "accessTier": "Hot"
+            },
+            "resources": []
+        },
+        {
+            "name": "[concat(variables('storageAccountName'), '/default/',toLower(parameters('containers')[copyindex()]))]",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-04-01",
+            "tags": {
+                "groupdId": "[parameters('groupId')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "copy": {
+                "name": "containerCopy",
+                "count": "[length(parameters('containers'))]"
+            },
+            "properties": {
+                "publicAccess": "Container"
+            },
+            "resources": []
+        }
+    ],
+    "outputs": {
+        "storageAccountName": {
+            "type": "string",
+            "value": "[variables('storageAccountName')]"
+        },
+        "integrationAccountName": {
+            "type": "string",
+            "value": "[variables('integrationAccountName')]"
+        }
+    }
+}
