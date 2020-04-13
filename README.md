@@ -4,9 +4,9 @@ This repository is a placeholder for building a logic app that can be used to B2
 
 ## Folder Structure
 
-- templates
+1.Templates
 ..* following the guidelines of "automate logic apps" split the whole template into specialized json files
-- artifacts
+2.Artifacts
 ..* liquid file to map xml to a custom order format
 ..* sample 850 Purchase order in X12
 ..* x12 850 xsd to be uploaded to integration account, to be used on agreement between partners
@@ -19,9 +19,10 @@ This repository is a placeholder for building a logic app that can be used to B2
 ..* have to figure out how to add items from artifact folder as part of provisioning integration account
 
 ## References
-[Logic Apps - Automate deployment](https://github.com/Azure-Samples/azure-logic-apps-deployment-samples)
-[Logic Apps Template Generator](https://github.com/jeffhollan/LogicAppTemplateCreator)
-[Logic Apps - B2B Integration Strategy](https://github.com/Azure/logicapps/blob/master/articles/microsoft-integration-with-azure-logic-apps.pdf)
+
+1.[Logic Apps - Automate deployment](https://github.com/Azure-Samples/azure-logic-apps-deployment-samples)
+2.[Logic Apps Template Generator](https://github.com/jeffhollan/LogicAppTemplateCreator)
+3.[Logic Apps - B2B Integration Strategy](https://github.com/Azure/logicapps/blob/master/articles/microsoft-integration-with-azure-logic-apps.pdf)
 
 ## Logic App Definition (Current)
 
