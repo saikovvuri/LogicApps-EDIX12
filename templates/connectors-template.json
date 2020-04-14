@@ -81,7 +81,7 @@
           "groupdId": "[parameters('groupId')]"
         },
         "properties": {
-          "displayName": "operationStore",
+          "displayName": "storageAccount",
           "customParameterValues": {},
           "api": {
             "id": "[variables('blobConnectionId')]"
