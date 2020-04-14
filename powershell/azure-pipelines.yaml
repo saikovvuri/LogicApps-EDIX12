@@ -21,7 +21,7 @@ stages:
     - script: |
         echo ##vso[task.setvariable variable=resourceGroupName]$(groupId)$(environment)rgp$(location)-$(sharedResourceGroupIdentifier)
         echo ##vso[task.setvariable variable=templateFilePath]$(Build.Repository.LocalPath)\templates\shared-template.json
-        echo ##vso[task.setvariable variable=logicAppDeployScript]$(Build.Repository.LocalPath)\powershell\shared-deploy.ps1
+        echo ##vso[task.setvariable variable=logicAppDeployScript]$(Build.Repository.LocalPath)\powershell\logic-app-deploy.ps1
       name: setDynamicVariableNames
     - powershell: |
         Write-Host "templateFilePath: $(templateFilePath)"
