@@ -2,6 +2,8 @@
 
 This repository is a placeholder for building a logic app that can be used to B2B Integration flow using EDI X12 standard. The sample flow receives purchase orders (X12 850) from trading partners and process it downstream.
 
+[![Build Status](https://sdrk.visualstudio.com/LogicApps-EDIX12/_apis/build/status/saikovvuri.LogicApps-EDIX12?branchName=master)](https://sdrk.visualstudio.com/LogicApps-EDIX12/_build/latest?definitionId=56&branchName=master)
+
 ## Folder Structure
 
 1. Templates
