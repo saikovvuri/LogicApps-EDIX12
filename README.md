@@ -10,13 +10,18 @@ This repository is a placeholder for building a logic app that can be used to B2
     - liquid file to map xml to a custom order format
     - sample 850 Purchase order in X12
     - x12 850 xsd to be uploaded to integration account, to be used on agreement between partners
+3. Powershell
+    a. shared-deploy.ps1, deploys shared components like integration account, storage account
+    b. logic-app-deploy.ps1, deploys connectors to integration account and storage account and then the logic app itself
+    c. full-deploy.ps1, can just execute this master script alone and it would achieve the same desired state as above
 
 ## Work In progress
 
 1. using metadata on integration account artifacts to build reusable patterns across multiple partners
 2. automate deployments for logic apps to dev/test/prod environments using the guidelines in the references section
     - have complete separating logic app template, logic app definition, logic app definition paramters into separate json files
-    - have to figure out how to add items from artifact folder as part of provisioning integration account
+    - have tested executing the deploy scripts and ensure resources have been provisioned correctly
+    - have to figure out how to add items from artifact folder as part of provisioning integration account like maps, schemas, partners, agreements
 
 ## References
 
