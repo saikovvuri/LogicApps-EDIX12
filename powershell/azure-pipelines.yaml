@@ -1,6 +1,6 @@
 variables: 
   location: westus
-  groupId: cse01
+  groupId: x12
   abbrevLocationName: westus
   instanceCount: 1
   identifier: sample-int-account  
